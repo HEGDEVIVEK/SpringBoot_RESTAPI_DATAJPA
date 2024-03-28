@@ -17,14 +17,23 @@ public class DepartmentServiceImpl implements DepartmentService {
     private DepartmentRepository departmentRepository;
     @Override
     public void insertDepartment(Department department) {
+
         departmentRepository.save(department);
-        //System.out.println(departmentRepository);
+
     }
 
     @Override
-    public List<Department> getdepartment() {
-        return departmentRepository.findAll();
-    }
+    public List<Department> getdepartment() throws DepartmentNotFoundException {
+        List<Department> departments=  departmentRepository.findAll();
+        if(departments.isEmpty())
+        {
+            throw new  DepartmentNotFoundException("No department data Info found");
+        }
+        else
+        {
+            return departments;
+        }
+}
 
     @Override
     public Department IdDepartment(Long departmentId) throws DepartmentNotFoundException {
@@ -41,47 +50,62 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Department Namedepartments(String departmentName)
-    {
+    public Department Namedepartments(String departmentName) throws DepartmentNotFoundException {
         //For inbulit Direct Intreface
-        return departmentRepository.findByDepartmentNameIgnoreCase(departmentName);
 
+        Department department= departmentRepository.findByDepartmentNameIgnoreCase(departmentName);
         //return departmentRepository.findByName(departmentName);
+
+        if(department!=null)
+        {
+            return department;
+        }
+        else
+        {
+            throw new DepartmentNotFoundException("DepartmentName "+departmentName+" Info not present");
+        }
 
     }
 
     @Override
-    public String Deletedepartment(Long departmentId) {
-        Department department = departmentRepository.findById(departmentId).get();
-        if(department!=null)
+    public String Deletedepartment(Long departmentId) throws DepartmentNotFoundException {
+
+        Optional<Department> department = departmentRepository.findById(departmentId);
+        if(department.isPresent())
         {
             departmentRepository.deleteById(departmentId);
             return "DepartmentId "+departmentId+" deleted successfully!!";
         }
         else
         {
-            return null;
+            throw new DepartmentNotFoundException("DepartmentName "+departmentId+" Info not present");
         }
     }
 
     @Override
-    public String Updatedepartments(Long departmentId, Department department) {
-      Department department1 = departmentRepository.findById(departmentId).get();
-       if(department1!=null)
+    public Department Updatedepartments(Long departmentId, Department department) throws DepartmentNotFoundException {
+        Optional<Department> department1 = departmentRepository.findById(departmentId);
+       if(department1.isPresent())
        {
 
-           department1.setDepartmentName(department.getDepartmentName());
-           department1.setDepartmentAddress(department.getDepartmentAddress());
-           department1.setDepartmentCode(department.getDepartmentCode());
-           departmentRepository.save(department1);
+           Department department2=department1.get();
+           department2.setDepartmentName(department.getDepartmentName());
+           department2.setDepartmentAddress(department.getDepartmentAddress());
+           department2.setDepartmentCode(department.getDepartmentCode());
+           departmentRepository.save(department2);
 
-           return "Successfully Department "+ departmentId+" Updated";
+           return departmentRepository.findById(departmentId).get();
        }
        else
         {
-            return null;
+            throw new DepartmentNotFoundException("DepartmentName "+departmentId+" Info not present");
         }
 
     }
+
+    @Override
+    public List<Department> serachDeaprtment(String text)
+    {
+        return  departmentRepository.findByDepartmentNameIgnoreCaseContainingOrDepartmentAddressIgnoreCaseContaining(text, text);    }
 
 }

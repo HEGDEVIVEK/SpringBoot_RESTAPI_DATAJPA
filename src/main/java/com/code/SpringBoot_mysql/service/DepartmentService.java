@@ -10,15 +10,16 @@ import java.util.List;
 public interface DepartmentService {
    public void insertDepartment(Department department);
 
-  public List<Department> getdepartment();
+  public List<Department> getdepartment() throws DepartmentNotFoundException;
 
    public Department IdDepartment(Long departmentId) throws DepartmentNotFoundException;
 
-   public Department Namedepartments(String departmentName);
+   public Department Namedepartments(String departmentName) throws DepartmentNotFoundException;
 
-   public String Deletedepartment(Long departmentId);
+   public String Deletedepartment(Long departmentId) throws DepartmentNotFoundException;
 
-    public  String Updatedepartments(Long departmentId, Department department);
+    public  Department Updatedepartments(Long departmentId, Department department) throws DepartmentNotFoundException;
 
 
+    List<Department> serachDeaprtment(String text);
 }

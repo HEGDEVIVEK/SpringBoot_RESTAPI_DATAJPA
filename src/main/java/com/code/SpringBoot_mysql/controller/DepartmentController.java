@@ -1,12 +1,11 @@
 package com.code.SpringBoot_mysql.controller;
 
-import com.code.SpringBoot_mysql.model.Department;
 import com.code.SpringBoot_mysql.error.DepartmentNotFoundException;
+import com.code.SpringBoot_mysql.model.Department;
 import com.code.SpringBoot_mysql.service.DepartmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +16,15 @@ public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;
 
+    @Value("${welcome.message}")
+    private String welcmssg;
+
+    @GetMapping("/welcome")
+    public String Welcome()
+    {
+        return welcmssg;
+    }
+
     @PostMapping("/insdepartments")
     public void saveDepartment(@Valid @RequestBody Department department)
     {
@@ -25,7 +33,7 @@ public class DepartmentController {
     }
 
    @GetMapping("/getdepartments")
-    public List<Department> getDepartment()
+    public List<Department> getDepartment() throws DepartmentNotFoundException
    {
        return departmentService.getdepartment();
    }
@@ -38,52 +46,31 @@ public class DepartmentController {
    }
 
    @GetMapping("/Namedepartments/{name}")
-   public ResponseEntity<Department> Namedepartments(@PathVariable("name") String departmentName)
-   {
-       Department department= departmentService.Namedepartments(departmentName);
-       if(department!=null)
-       {
-           return new ResponseEntity<>(department, HttpStatus.OK);
-       }
-       else
-       {
-           return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-       }
+   public Department Namedepartments(@PathVariable("name") String departmentName) throws DepartmentNotFoundException {
+
+      return departmentService.Namedepartments(departmentName);
+
    }
 
    @DeleteMapping("/Deletedepartments/{id}")
-    public ResponseEntity<String> Deletedepartment(@PathVariable("id") Long departmentId)
-   {
+    public String Deletedepartment(@PathVariable("id") Long departmentId) throws DepartmentNotFoundException {
 
-       String message=departmentService.Deletedepartment(departmentId);
-       if(message!=null)
-       {
-           return new ResponseEntity<>(message, HttpStatus.OK);
-       }
-       else
-       {
-           return new ResponseEntity<>("DepartmentId "+departmentId+" NOt present !!",HttpStatus.NOT_FOUND);
-       }
-
+       return departmentService.Deletedepartment(departmentId);
 
    }
 
 
    @PutMapping("/Updatedepartments/{id}")
-    public ResponseEntity<String> Updatedepartments(@PathVariable("id") Long departmentId,
-                                    @RequestBody Department department)
+    public Department Updatedepartments(@PathVariable("id") Long departmentId,
+                                    @RequestBody Department department) throws DepartmentNotFoundException {
+       return  departmentService.Updatedepartments(departmentId,department);
 
+   }
+
+   @GetMapping("/search/{text}")
+    public List<Department> SearchDepartment(@PathVariable("text") String text)
    {
-       String message1=departmentService.Updatedepartments(departmentId,department);
-       if(message1!=null)
-       {
-           return new ResponseEntity<>(message1, HttpStatus.OK);
-       }
-       else
-       {
-           return new ResponseEntity<>("Department "+departmentId+" Not found",HttpStatus.NOT_FOUND);
-
-       }
+       return departmentService.serachDeaprtment(text);
    }
 
 

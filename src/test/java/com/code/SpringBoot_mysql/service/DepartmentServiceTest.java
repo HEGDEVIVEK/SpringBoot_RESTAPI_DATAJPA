@@ -1,5 +1,6 @@
 package com.code.SpringBoot_mysql.service;
 
+import com.code.SpringBoot_mysql.error.DepartmentNotFoundException;
 import com.code.SpringBoot_mysql.model.Department;
 import com.code.SpringBoot_mysql.repository.DepartmentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,8 +40,7 @@ class DepartmentServiceTest {
 
     @Test
     @DisplayName("Checking department name is matching or not")
-    public void departmentFindByNameTest()
-    {
+    public void departmentFindByNameTest() throws DepartmentNotFoundException {
 
          department =departmentService.Namedepartments("CS");
 

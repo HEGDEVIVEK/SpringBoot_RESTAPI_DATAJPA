@@ -22,7 +22,7 @@ public class DepartmentController {
     @GetMapping("/welcome")
     public String Welcome()
     {
-        return welcmssg;
+        return "Vivek s hegde";
     }
 
     @PostMapping("/insdepartments")
